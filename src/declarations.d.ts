@@ -1,11 +1,17 @@
+interface coordinates {
+  x: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
+  y: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
+}
+
 interface game {
   over(): boolean;
   players: player[];
 }
 
+// One per player, one side theirs w/ships one opponent w/out
 interface gameBoard {
   allSunk(): boolean;
-  placeShip(): true | Error;
+  placeShip(ship: ship, start: coordinates, end: coordinates): true | Error;
   receiveAttack(): boolean;
   rows: row[];
   ships: ship[];
@@ -22,9 +28,7 @@ interface player {
   gameBoard: gameBoard;
 }
 
-interface row {
-  spaces: space[];
-}
+type row = space[];
 
 interface ship {
   length: number;

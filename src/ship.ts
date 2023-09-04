@@ -1,4 +1,4 @@
-export function shipFactory(type: shipType): ship {
+function shipFactory(type: shipType): ship {
   const length = lengthFromType(type);
   let hitCount = 0;
 
@@ -30,3 +30,5 @@ function lengthFromType(type: shipType) {
       throw new Error("That's not a real ship type!");
   }
 }
+
+export { shipFactory };
