@@ -11,6 +11,11 @@ interface gameBoard {
   ships: ship[];
 }
 
+interface lengthMapping {
+  type: shipType;
+  length: number;
+}
+
 interface player {
   name: string;
   human: boolean;
@@ -23,10 +28,17 @@ interface row {
 
 interface ship {
   length: number;
-  hitCount: number;
-  sunk: boolean;
   hit(): number;
+  sunk(): boolean;
+  type: shipType;
 }
+
+type shipType =
+  | "Carrier"
+  | "Battleship"
+  | "Destroyer"
+  | "Submarine"
+  | "Patrol Boat";
 
 interface space {
   ship: ship | null;
