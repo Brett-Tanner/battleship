@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, test } from "vitest";
-import { gameBoardFactory } from "../gameboard";
+import { gameBoardFactory } from "../gameBoard";
 import { shipFactory } from "../ship";
 
 describe("gameBoardFactory()", () => {
@@ -92,34 +92,64 @@ describe("gameBoardFactory()", () => {
       battleship = shipFactory("Battleship");
     });
 
-    test("places a ship correctly", () => {
-      board.placeShip(battleship, { x: 0, y: 0 }, { x: 4, y: 0 });
+    test("places a ship vertically up", () => {
+      board.placeShip(battleship, { x: 0, y: 9 }, { x: 0, y: 6 });
+
+      expect(board.rows[9][0].ship).toBe(battleship);
+      expect(board.rows[8][0].ship).toBe(battleship);
+      expect(board.rows[7][0].ship).toBe(battleship);
+      expect(board.rows[6][0].ship).toBe(battleship);
+    });
+
+    test("places a ship vertically down", () => {
+      board.placeShip(battleship, { x: 0, y: 3 }, { x: 0, y: 6 });
+
+      expect(board.rows[3][0].ship).toBe(battleship);
+      expect(board.rows[4][0].ship).toBe(battleship);
+      expect(board.rows[5][0].ship).toBe(battleship);
+      expect(board.rows[6][0].ship).toBe(battleship);
+    });
+
+    test("places a ship horizontally right", () => {
+      board.placeShip(battleship, { x: 4, y: 0 }, { x: 7, y: 0 });
+
+      expect(board.rows[0][4].ship).toBe(battleship);
+      expect(board.rows[0][5].ship).toBe(battleship);
+      expect(board.rows[0][6].ship).toBe(battleship);
+      expect(board.rows[0][7].ship).toBe(battleship);
+    });
+
+    test("places a ship horizontally left", () => {
+      board.placeShip(battleship, { x: 3, y: 0 }, { x: 0, y: 0 });
+
+      expect(board.rows[0][3].ship).toBe(battleship);
+      expect(board.rows[0][2].ship).toBe(battleship);
+      expect(board.rows[0][1].ship).toBe(battleship);
       expect(board.rows[0][0].ship).toBe(battleship);
     });
 
     test("does not allow end further than ship length", () => {
-      const response = board.placeShip(
-        battleship,
-        { x: 0, y: 0 },
-        { x: 9, y: 0 }
+      expect(() =>
+        board.placeShip(battleship, { x: 0, y: 0 }, { x: 9, y: 0 })
+      ).toThrowError(
+        "Your coordinates cover 10 spaces on the X-axis; your ship covers 4 spaces"
       );
-      expect(response).toBe("Your ship isn't long enough");
     });
 
-    test("does not allow end further than ship length", () => {
-      const response = board.placeShip(
-        battleship,
-        { x: 0, y: 0 },
-        { x: 1, y: 0 }
+    test("does not allow end shorter than ship length", () => {
+      expect(() =>
+        board.placeShip(battleship, { x: 0, y: 0 }, { x: 1, y: 0 })
+      ).toThrowError(
+        "Your coordinates cover 2 spaces on the X-axis; your ship covers 4 spaces"
       );
-      expect(response).toBe("Your ship is longer than that");
     });
 
     test("does not allow overlapping ships", () => {
-      board.placeShip(battleship, { x: 0, y: 0 }, { x: 4, y: 0 });
+      board.placeShip(battleship, { x: 0, y: 0 }, { x: 3, y: 0 });
       const carrier = shipFactory("Carrier");
-      const response = board.placeShip(carrier, { x: 0, y: 0 }, { x: 0, y: 5 });
-      expect(response).toBe("That overlaps an existing ship");
+      expect(() => {
+        board.placeShip(carrier, { x: 0, y: 0 }, { x: 0, y: 4 });
+      }).toThrowError("That space is occupied by a Battleship");
     });
   });
 });

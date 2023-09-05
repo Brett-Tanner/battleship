@@ -20,17 +20,73 @@ function gameBoardFactory(): gameBoard {
     });
   };
 
+  function checkValidity(
+    length: number,
+    start: coordinates,
+    end: coordinates
+  ): { x: number; y: number } {
+    const xChange = start.x - end.x;
+    const xLength = Math.abs(xChange) + 1;
+    const yChange = start.y - end.y;
+    const yLength = Math.abs(yChange) + 1;
+
+    if (xLength !== length && yLength !== length) {
+      if (xChange !== 0) {
+        throw new Error(
+          `Your coordinates cover ${xLength} spaces on the X-axis; your ship covers ${length} spaces`
+        );
+      } else {
+        throw new Error(
+          `Your coordinates cover ${yLength} spaces on the Y-axis; your ship covers ${length} spaces`
+        );
+      }
+    }
+
+    return { x: xChange, y: yChange };
+  }
+
+  function createRows(): row[] {
+    return Array.from({ length: 10 }, () => {
+      return Array.from({ length: 10 }, () => {
+        return spaceFactory();
+      });
+    });
+  }
+
+  function fillSpace(space: space, ship: ship) {
+    if (space.ship) {
+      throw new Error(`That space is occupied by a ${space.ship.type}`);
+    } else {
+      space.ship = ship;
+    }
+  }
+
   const placeShip = (ship: ship, start: coordinates, end: coordinates) => {
-    // FE validation for coords being in bounds
+    const coordDiff = checkValidity(ship.length, start, end);
+    if (coordDiff.x !== 0) {
+      for (let i = 0; i < ship.length; i++) {
+        const space =
+          coordDiff.x > 0
+            ? rows[start.y][start.x - i]
+            : rows[start.y][start.x + i];
+        fillSpace(space, ship);
+      }
+    } else {
+      for (let i = 0; i < ship.length; i++) {
+        const space =
+          coordDiff.y > 0
+            ? rows[start.y - i][start.x]
+            : rows[start.y + i][start.x];
+        fillSpace(space, ship);
+      }
+    }
   };
 
-  const receiveAttack = () => {};
+  const receiveAttack = () => {
+    return true;
+  };
 
   return { allSunk, placeShip, receiveAttack, rows, ships };
-}
-
-function createRows() {
-  return Array(10).fill(Array(10).fill(spaceFactory()));
 }
 
 export { gameBoardFactory };

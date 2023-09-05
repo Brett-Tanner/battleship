@@ -11,7 +11,7 @@ interface game {
 // One per player, one side theirs w/ships one opponent w/out
 interface gameBoard {
   allSunk(): boolean;
-  placeShip(ship: ship, start: coordinates, end: coordinates): true | Error;
+  placeShip(ship: ship, start: coordinates, end: coordinates): void;
   receiveAttack(): boolean;
   rows: row[];
   ships: ship[];
