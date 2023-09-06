@@ -6,7 +6,6 @@ interface coordinates {
 }
 
 interface game {
-  over(): boolean;
   players: player[];
 }
 
@@ -29,6 +28,11 @@ interface player {
   human: boolean;
   gameBoard: gameBoard;
   attack(board, coordinates?): boolean;
+}
+
+interface playerParams {
+  name: string;
+  human: boolean;
 }
 
 type row = space[];

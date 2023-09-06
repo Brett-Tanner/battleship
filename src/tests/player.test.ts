@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, test } from "vitest";
-import { playerFactory } from "../player";
-import { shipFactory } from "../ship";
+import { playerFactory } from "../controllers/player";
+import { shipFactory } from "../controllers/ship";
 
 const player = playerFactory("Viktoriia", true);
 const opponent = playerFactory("Brett", true);

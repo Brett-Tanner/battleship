@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { spaceFactory } from "../space";
+import { spaceFactory } from "../controllers/space";
 
 describe("spaceFactory", () => {
   const space = spaceFactory();

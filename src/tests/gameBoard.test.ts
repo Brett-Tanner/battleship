@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, test } from "vitest";
-import { gameBoardFactory } from "../gameBoard";
-import { shipFactory } from "../ship";
+import { gameBoardFactory } from "../controllers/gameBoard";
+import { shipFactory } from "../controllers/ship";
 
 describe("gameBoardFactory()", () => {
   test("returns a gameBoard", () => {

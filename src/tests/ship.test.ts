@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { shipFactory } from "../ship.ts";
+import { shipFactory } from "../controllers/ship";
 
 describe("shipFactory()", () => {
   const lengthMappings: lengthMapping[] = [
