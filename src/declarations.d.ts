@@ -1,6 +1,8 @@
+type boardDimensions = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
+
 interface coordinates {
-  x: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
-  y: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
+  y: boardDimensions;
+  x: boardDimensions;
 }
 
 interface game {
@@ -12,7 +14,7 @@ interface game {
 interface gameBoard {
   allSunk(): boolean;
   placeShip(ship: ship, start: coordinates, end: coordinates): void;
-  receiveAttack(): boolean;
+  receiveAttack(space): boolean;
   rows: row[];
   ships: ship[];
 }

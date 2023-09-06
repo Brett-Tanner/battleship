@@ -42,7 +42,7 @@ function gameBoardFactory(): gameBoard {
       }
     }
 
-    return { x: xChange, y: yChange };
+    return { y: yChange, x: xChange };
   }
 
   function createRows(): row[] {
@@ -63,15 +63,7 @@ function gameBoardFactory(): gameBoard {
 
   const placeShip = (ship: ship, start: coordinates, end: coordinates) => {
     const coordDiff = checkValidity(ship.length, start, end);
-    if (coordDiff.x !== 0) {
-      for (let i = 0; i < ship.length; i++) {
-        const space =
-          coordDiff.x > 0
-            ? rows[start.y][start.x - i]
-            : rows[start.y][start.x + i];
-        fillSpace(space, ship);
-      }
-    } else {
+    if (coordDiff.y !== 0) {
       for (let i = 0; i < ship.length; i++) {
         const space =
           coordDiff.y > 0
@@ -79,11 +71,27 @@ function gameBoardFactory(): gameBoard {
             : rows[start.y + i][start.x];
         fillSpace(space, ship);
       }
+    } else {
+      for (let i = 0; i < ship.length; i++) {
+        const space =
+          coordDiff.x > 0
+            ? rows[start.y][start.x - i]
+            : rows[start.y][start.x + i];
+        fillSpace(space, ship);
+      }
     }
   };
 
-  const receiveAttack = () => {
-    return true;
+  const receiveAttack = (coordinates: coordinates) => {
+    const space = rows[coordinates.y][coordinates.x];
+    if (space.ship) {
+      space.ship.hit();
+      space.hit = true;
+      return true;
+    } else {
+      space.missed = true;
+      return false;
+    }
   };
 
   return { allSunk, placeShip, receiveAttack, rows, ships };

@@ -93,7 +93,7 @@ describe("gameBoardFactory()", () => {
     });
 
     test("places a ship vertically up", () => {
-      board.placeShip(battleship, { x: 0, y: 9 }, { x: 0, y: 6 });
+      board.placeShip(battleship, { y: 9, x: 0 }, { y: 6, x: 0 });
 
       expect(board.rows[9][0].ship).toBe(battleship);
       expect(board.rows[8][0].ship).toBe(battleship);
@@ -102,7 +102,7 @@ describe("gameBoardFactory()", () => {
     });
 
     test("places a ship vertically down", () => {
-      board.placeShip(battleship, { x: 0, y: 3 }, { x: 0, y: 6 });
+      board.placeShip(battleship, { y: 3, x: 0 }, { y: 6, x: 0 });
 
       expect(board.rows[3][0].ship).toBe(battleship);
       expect(board.rows[4][0].ship).toBe(battleship);
@@ -111,7 +111,7 @@ describe("gameBoardFactory()", () => {
     });
 
     test("places a ship horizontally right", () => {
-      board.placeShip(battleship, { x: 4, y: 0 }, { x: 7, y: 0 });
+      board.placeShip(battleship, { y: 0, x: 4 }, { y: 0, x: 7 });
 
       expect(board.rows[0][4].ship).toBe(battleship);
       expect(board.rows[0][5].ship).toBe(battleship);
@@ -120,7 +120,7 @@ describe("gameBoardFactory()", () => {
     });
 
     test("places a ship horizontally left", () => {
-      board.placeShip(battleship, { x: 3, y: 0 }, { x: 0, y: 0 });
+      board.placeShip(battleship, { y: 0, x: 3 }, { y: 0, x: 0 });
 
       expect(board.rows[0][3].ship).toBe(battleship);
       expect(board.rows[0][2].ship).toBe(battleship);
@@ -128,9 +128,16 @@ describe("gameBoardFactory()", () => {
       expect(board.rows[0][0].ship).toBe(battleship);
     });
 
+    test("does not overflow start/end", () => {
+      board.placeShip(battleship, { y: 1, x: 4 }, { y: 1, x: 1 });
+
+      expect(board.rows[1][0].ship).toBe(null);
+      expect(board.rows[1][5].ship).toBe(null);
+    });
+
     test("does not allow end further than ship length", () => {
       expect(() =>
-        board.placeShip(battleship, { x: 0, y: 0 }, { x: 9, y: 0 })
+        board.placeShip(battleship, { y: 0, x: 0 }, { y: 0, x: 9 })
       ).toThrowError(
         "Your coordinates cover 10 spaces on the X-axis; your ship covers 4 spaces"
       );
@@ -138,18 +145,58 @@ describe("gameBoardFactory()", () => {
 
     test("does not allow end shorter than ship length", () => {
       expect(() =>
-        board.placeShip(battleship, { x: 0, y: 0 }, { x: 1, y: 0 })
+        board.placeShip(battleship, { y: 0, x: 0 }, { y: 0, x: 1 })
       ).toThrowError(
         "Your coordinates cover 2 spaces on the X-axis; your ship covers 4 spaces"
       );
     });
 
     test("does not allow overlapping ships", () => {
-      board.placeShip(battleship, { x: 0, y: 0 }, { x: 3, y: 0 });
+      board.placeShip(battleship, { y: 0, x: 0 }, { y: 0, x: 3 });
       const carrier = shipFactory("Carrier");
       expect(() => {
-        board.placeShip(carrier, { x: 0, y: 0 }, { x: 0, y: 4 });
+        board.placeShip(carrier, { y: 0, x: 0 }, { y: 4, x: 0 });
       }).toThrowError("That space is occupied by a Battleship");
+    });
+  });
+
+  describe("receiveAttack()", () => {
+    let board: gameBoard;
+    let patrolBoat: ship;
+
+    beforeEach(async () => {
+      board = gameBoardFactory();
+      patrolBoat = shipFactory("Patrol Boat");
+    });
+
+    test("returns true if hit", () => {
+      board.placeShip(patrolBoat, { y: 9, x: 9 }, { y: 9, x: 8 });
+      const returnValue = board.receiveAttack({ y: 9, x: 9 });
+
+      expect(returnValue).toBe(true);
+    });
+
+    test("places hit marker if hit", () => {
+      board.placeShip(patrolBoat, { y: 9, x: 9 }, { y: 9, x: 8 });
+      board.receiveAttack({ y: 9, x: 9 });
+      const spaceHit = board.rows[9][9].hit;
+
+      expect(spaceHit).toBe(true);
+    });
+
+    test("returns false if miss", () => {
+      board.placeShip(patrolBoat, { y: 5, x: 5 }, { y: 6, x: 5 });
+      const returnValue = board.receiveAttack({ y: 9, x: 9 });
+
+      expect(returnValue).toBe(false);
+    });
+
+    test("places miss marker if miss", () => {
+      board.placeShip(patrolBoat, { y: 9, x: 9 }, { y: 9, x: 8 });
+      board.receiveAttack({ y: 5, x: 5 });
+      const spaceHit = board.rows[5][5].missed;
+
+      expect(spaceHit).toBe(true);
     });
   });
 });
