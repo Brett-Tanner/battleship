@@ -10,7 +10,7 @@ interface game {
   players: player[];
 }
 
-// One per player, one side theirs w/ships one opponent w/out
+// Send to opponent, but hide ships in DOM with param on display function
 interface gameBoard {
   allSunk(): boolean;
   placeShip(ship: ship, start: coordinates, end: coordinates): void;
@@ -28,6 +28,7 @@ interface player {
   name: string;
   human: boolean;
   gameBoard: gameBoard;
+  attack(board, coordinates?): boolean;
 }
 
 type row = space[];
