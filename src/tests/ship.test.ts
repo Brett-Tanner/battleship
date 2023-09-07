@@ -1,6 +1,5 @@
 import { describe, expect, test } from "vitest";
 import { shipFactory } from "../controllers/ship";
-import { gameBoardFactory } from "../controllers/gameBoard";
 
 describe("shipFactory()", () => {
   const lengthMappings: lengthMapping[] = [

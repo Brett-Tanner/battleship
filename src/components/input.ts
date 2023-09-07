@@ -1,3 +1,5 @@
+import { playGame } from "../controllers/game";
+
 function playerForm() {
   const form = document.createElement("form");
 
@@ -18,6 +20,14 @@ function playerForm() {
     "outline-teal-900",
     "focus-within:outline-teal-700"
   );
+  submitButton.addEventListener("click", (e) => {
+    e.preventDefault();
+
+    const playerOne: playerData = getPlayerData(1);
+    const playerTwo: playerData = getPlayerData(2);
+
+    playGame(playerOne, playerTwo);
+  });
 
   form.append(...playerInputs, submitButton);
   form.classList.add(
@@ -28,6 +38,20 @@ function playerForm() {
     "items-center"
   );
   return form;
+}
+
+function getPlayerData(i: number) {
+  const nameInput = document.getElementById(`name${i}`);
+  if (nameInput === null || !(nameInput instanceof HTMLInputElement))
+    throw new Error(`Name input missing for player ${i}`);
+  const name = nameInput.value;
+
+  const humanInput = document.getElementById(`human${i}`);
+  if (humanInput === null || !(humanInput instanceof HTMLInputElement))
+    throw new Error(`Humanity missing for player ${i}`);
+  const human = humanInput.value === "1" ? true : false;
+
+  return { name, human };
 }
 
 function playerInput(i: number) {
@@ -67,6 +91,7 @@ function playerInput(i: number) {
   humanLabel.classList.add("font-semibold", "text-2xl");
 
   const humanInput = document.createElement("input");
+  humanInput.id = `human${i}`;
   humanInput.type = "checkbox";
   humanInput.classList.add("h-8");
 
