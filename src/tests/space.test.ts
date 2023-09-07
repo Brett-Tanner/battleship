@@ -8,6 +8,7 @@ describe("spaceFactory", () => {
     expect(space).toHaveProperty("ship");
     expect(space).toHaveProperty("hit");
     expect(space).toHaveProperty("missed");
+    expect(space).toHaveProperty("possible");
   });
 
   test("initial ship value is null", () => {

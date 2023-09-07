@@ -1,5 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { shipFactory } from "../controllers/ship";
+import { gameBoardFactory } from "../controllers/gameBoard";
 
 describe("shipFactory()", () => {
   const lengthMappings: lengthMapping[] = [
@@ -37,5 +38,47 @@ describe("shipFactory()", () => {
         expect(ship.sunk()).toBe(true);
       }
     );
+  });
+
+  describe("possibleEnds()", () => {
+    const ship = shipFactory("Patrol Boat");
+
+    test("returns an array of coordinates", () => {
+      const returnValue = ship.possibleEnds({ y: 5, x: 5 });
+
+      expect(returnValue).toContainEqual({ y: 6, x: 5 });
+      expect(returnValue).toContainEqual({ y: 4, x: 5 });
+      expect(returnValue).toContainEqual({ y: 5, x: 6 });
+      expect(returnValue).toContainEqual({ y: 5, x: 4 });
+    });
+
+    test("two options in corner", () => {
+      const returnValue = ship.possibleEnds({ y: 0, x: 9 });
+
+      expect(returnValue).toEqual([
+        { y: 1, x: 9 },
+        { y: 0, x: 8 },
+      ]);
+    });
+
+    test("three options on vertical edge", () => {
+      const returnValue = ship.possibleEnds({ y: 5, x: 9 });
+
+      expect(returnValue).toEqual([
+        { y: 6, x: 9 },
+        { y: 4, x: 9 },
+        { y: 5, x: 8 },
+      ]);
+    });
+
+    test("three options on horizontal edge", () => {
+      const returnValue = ship.possibleEnds({ y: 0, x: 5 });
+
+      expect(returnValue).toEqual([
+        { y: 1, x: 5 },
+        { y: 0, x: 6 },
+        { y: 0, x: 4 },
+      ]);
+    });
   });
 });
