@@ -94,7 +94,11 @@ function gameBoardFactory(): gameBoard {
     }
   };
 
-  return { allSunk, placeShip, receiveAttack, rows, ships };
+  const vacant = (coordinates: coordinates) => {
+    return rows[coordinates.y][coordinates.x].ship === null ? true : false;
+  };
+
+  return { allSunk, placeShip, receiveAttack, rows, ships, vacant };
 }
 
 export { gameBoardFactory };
