@@ -26,11 +26,16 @@ function createRow(row: space[], rowIndex: number) {
     const domSpace = document.createElement("td");
     domSpace.dataset.coordinates = `y${rowIndex}_x${spaceIndex}`;
 
-    if (space.ship) domSpace.appendChild(shipMarker());
+    if (space.ship) domSpace.appendChild(shipMarker(space));
     if (space.hit) domSpace.appendChild(hitMarker());
     if (space.missed) domSpace.appendChild(missMarker());
 
-    domSpace.classList.add("border", "border-neutral-200");
+    domSpace.classList.add(
+      "border",
+      "border-neutral-200",
+      "w-[10%]",
+      "h-[10%]"
+    );
     return domSpace;
   });
 
@@ -52,25 +57,42 @@ function getCoordinates(cell: HTMLTableCellElement) {
   return { y: y, x: x };
 }
 
-function hitMarker() {
-  const marker = document.createElement("div");
-  marker.classList.add("bg-red-600", "rounded-full", "h-1/2", "w-1/2");
+// TODO: lot of repeated code to DRY here
 
-  return marker;
+function hitMarker() {
+  const container = document.createElement("div");
+
+  const marker = document.createElement("div");
+  marker.classList.add("bg-red-600", "rounded-full", "h-5", "w-5");
+
+  container.appendChild(marker);
+  container.classList.add("flex", "justify-center", "items-center");
+  return container;
 }
 
 function missMarker() {
-  const marker = document.createElement("div");
-  marker.classList.add("bg-neutral-200", "rounded-full", "h-3/4", "w-3/4");
+  const container = document.createElement("div");
 
-  return marker;
+  const marker = document.createElement("div");
+  marker.classList.add("bg-neutral-200", "rounded-full", "h-3", "w-3");
+
+  container.appendChild(marker);
+  container.classList.add("flex", "justify-center", "items-center");
+  return container;
 }
 
-function shipMarker() {
-  const marker = document.createElement("div");
-  marker.classList.add("bg-slate-400", "rounded-full", "h-3/4", "w-3/4");
+function shipMarker(space: space) {
+  const container = document.createElement("div");
 
-  return marker;
+  const marker = document.createElement("div");
+  marker.classList.add("bg-slate-400", "rounded-full", "h-3", "w-3");
+
+  if (space.hit) marker.appendChild(hitMarker());
+  if (space.missed) marker.appendChild(missMarker());
+
+  container.appendChild(marker);
+  container.classList.add("flex", "justify-center", "items-center");
+  return container;
 }
 
 export { getCoordinates, showBoard };

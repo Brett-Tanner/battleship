@@ -32,7 +32,11 @@ function playerFactory(name: string, human: boolean) {
   }
 
   function placeShips(main: HTMLElement, ship: ship | undefined) {
-    if (ship === undefined) return true;
+    if (ship === undefined) {
+      main.innerHTML = "";
+      main.appendChild(showBoard(gameBoard));
+      return;
+    }
     human ? humanPlace(main, ship) : aiPlace(ship);
   }
 
