@@ -1,5 +1,5 @@
 function spaceFactory(): space {
-  return { ship: null, hit: false, missed: false, possible: false };
+  return { ship: null, hit: false, missed: false };
 }
 
 export { spaceFactory };

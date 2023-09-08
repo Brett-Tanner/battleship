@@ -61,5 +61,4 @@ interface space {
   ship: ship | null;
   hit: boolean;
   missed: boolean;
-  possible: false;
 }
