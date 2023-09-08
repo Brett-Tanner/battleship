@@ -4,8 +4,6 @@ import { gameBoardFactory } from "./gameBoard";
 function playerFactory(name: string, human: boolean) {
   const gameBoard = gameBoardFactory();
 
-  function aiPlace(ship: ship) {}
-
   function attack(board: gameBoard, coordinates?: coordinates) {
     if (coordinates) {
       return board.receiveAttack({ y: coordinates.y, x: coordinates.x });
@@ -17,48 +15,60 @@ function playerFactory(name: string, human: boolean) {
     }
   }
 
-  function humanPlace(main: HTMLElement, ship: ship) {
+  async function humanPlace(main: HTMLElement, ship: ship) {
     main.innerHTML = "";
-    const placementBoard = showBoard(gameBoard, `Place your ${ship.type}`);
+    const placementBoard = showBoard(
+      gameBoard,
+      `${name}, place your ${ship.type}`
+    );
     const cells = placementBoard.querySelectorAll("td");
-    cells.forEach((cell) => {
-      cell.addEventListener("click", () => {
-        main.innerHTML = "";
-        main.appendChild(showBoard(gameBoard, `Place your ${ship.type}`));
-        setStart(main, cell, ship);
+    return new Promise<HTMLTableCellElement>((resolve) => {
+      cells.forEach((cell) => {
+        cell.addEventListener("click", () => {
+          main.innerHTML = "";
+          main.appendChild(
+            showBoard(gameBoard, `${name}, place your ${ship.type}`)
+          );
+          resolve(cell);
+        });
       });
+      main.appendChild(placementBoard);
     });
-    main.appendChild(placementBoard);
   }
 
-  function placeShips(main: HTMLElement, ship: ship | undefined) {
+  async function placeShips(main: HTMLElement, ship: ship | undefined) {
     if (ship === undefined) {
       main.innerHTML = "";
       main.appendChild(showBoard(gameBoard));
       return;
     }
-    human ? humanPlace(main, ship) : aiPlace(ship);
+    const startCell = await humanPlace(main, ship);
+    const endCoord = await setStart(startCell, ship);
+    gameBoard.placeShip(ship, getCoordinates(startCell), endCoord);
+    const nextShipIndex =
+      gameBoard.ships.findIndex((listShip) => {
+        return listShip.type === ship.type;
+      }) + 1;
+    return placeShips(main, gameBoard.ships[nextShipIndex]);
   }
 
-  function setStart(main: HTMLElement, cell: HTMLTableCellElement, ship: ship) {
+  async function setStart(cell: HTMLTableCellElement, ship: ship) {
     const start = getCoordinates(cell);
     document
       .querySelector(`[data-coordinates=y${start.y}_x${start.x}]`)
       ?.classList.add("bg-neutral-200");
 
     const possibleEnds = ship.possibleEnds(gameBoard, start);
-    possibleEnds.forEach((endCoord) => {
-      const endSpace = document.querySelector(
-        `[data-coordinates=y${endCoord.y}_x${endCoord.x}]`
-      );
-      endSpace?.classList.add("bg-green-500");
-      endSpace?.addEventListener("click", () => {
-        gameBoard.placeShip(ship, start, endCoord);
-        const nextShipIndex =
-          gameBoard.ships.findIndex((listShip) => {
-            return listShip.type === ship.type;
-          }) + 1;
-        placeShips(main, gameBoard.ships[nextShipIndex]);
+    return new Promise<coordinates>((resolve) => {
+      possibleEnds.forEach((endCoord) => {
+        const endSpace = document.querySelector(
+          `[data-coordinates=y${endCoord.y}_x${endCoord.x}]`
+        );
+        endSpace?.classList.add("bg-green-500");
+
+        endSpace?.addEventListener("click", () => {
+          resolve(endCoord);
+        });
       });
     });
   }
