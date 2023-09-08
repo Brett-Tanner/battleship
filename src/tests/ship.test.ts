@@ -1,5 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { shipFactory } from "../controllers/ship";
+import { gameBoardFactory } from "../controllers/gameBoard";
 
 describe("shipFactory()", () => {
   const lengthMappings: lengthMapping[] = [
@@ -41,9 +42,10 @@ describe("shipFactory()", () => {
 
   describe("possibleEnds()", () => {
     const ship = shipFactory("Patrol Boat");
+    const board = gameBoardFactory();
 
     test("returns an array of coordinates", () => {
-      const returnValue = ship.possibleEnds({ y: 5, x: 5 });
+      const returnValue = ship.possibleEnds(board, { y: 5, x: 5 });
 
       expect(returnValue).toContainEqual({ y: 6, x: 5 });
       expect(returnValue).toContainEqual({ y: 4, x: 5 });
@@ -52,7 +54,7 @@ describe("shipFactory()", () => {
     });
 
     test("two options in corner", () => {
-      const returnValue = ship.possibleEnds({ y: 0, x: 9 });
+      const returnValue = ship.possibleEnds(board, { y: 0, x: 9 });
 
       expect(returnValue).toEqual([
         { y: 1, x: 9 },
@@ -61,7 +63,7 @@ describe("shipFactory()", () => {
     });
 
     test("three options on vertical edge", () => {
-      const returnValue = ship.possibleEnds({ y: 5, x: 9 });
+      const returnValue = ship.possibleEnds(board, { y: 5, x: 9 });
 
       expect(returnValue).toEqual([
         { y: 6, x: 9 },
@@ -71,12 +73,27 @@ describe("shipFactory()", () => {
     });
 
     test("three options on horizontal edge", () => {
-      const returnValue = ship.possibleEnds({ y: 0, x: 5 });
+      const returnValue = ship.possibleEnds(board, { y: 0, x: 5 });
 
       expect(returnValue).toEqual([
         { y: 1, x: 5 },
         { y: 0, x: 6 },
         { y: 0, x: 4 },
+      ]);
+    });
+
+    test("doesn't return spaces occupied by a ship", () => {
+      board.placeShip(
+        shipFactory("Battleship"),
+        { y: 0, x: 0 },
+        { y: 0, x: 3 }
+      );
+      const returnValue = ship.possibleEnds(board, { y: 1, x: 2 });
+
+      expect(returnValue).toEqual([
+        { y: 2, x: 2 },
+        { y: 1, x: 3 },
+        { y: 1, x: 1 },
       ]);
     });
   });

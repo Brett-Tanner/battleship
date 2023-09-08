@@ -11,16 +11,20 @@ function shipFactory(type: shipType): ship {
     return hitCount >= length;
   };
 
-  function possibleEnds(currentCoords: coordinates) {
+  function possibleEnds(board: gameBoard, currentCoords: coordinates) {
     const ends: coordinates[] = [];
-    const down = currentCoords.y + length - 1;
-    if (down >= 0 && down <= 9) ends.push({ y: down, x: currentCoords.x });
-    const up = currentCoords.y - length + 1;
-    if (up >= 0 && up <= 9) ends.push({ y: up, x: currentCoords.x });
-    const right = currentCoords.x + length - 1;
-    if (right >= 0 && right <= 9) ends.push({ y: currentCoords.y, x: right });
-    const left = currentCoords.x - length + 1;
-    if (left >= 0 && left <= 9) ends.push({ y: currentCoords.y, x: left });
+
+    const down = { y: currentCoords.y + length - 1, x: currentCoords.x };
+    if (down.y >= 0 && down.y <= 9) ends.push(down);
+
+    const up = { y: currentCoords.y - length + 1, x: currentCoords.x };
+    if (up.y >= 0 && up.y <= 9 && board.vacant(up)) ends.push(up);
+
+    const right = { y: currentCoords.y, x: currentCoords.x + length - 1 };
+    if (right.x >= 0 && right.x <= 9) ends.push(right);
+
+    const left = { y: currentCoords.y, x: currentCoords.x - length + 1 };
+    if (left.x >= 0 && left.x <= 9) ends.push(left);
 
     return ends;
   }
