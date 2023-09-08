@@ -17,8 +17,10 @@ function playGame(playerOne: playerData, playerTwo: playerData) {
     playerFactory(playerTwo.name, playerTwo.human),
   ];
 
-  main.innerHTML = "";
-  main.append(showBoard(players[0].gameBoard), showBoard(players[1].gameBoard));
+  players[0].placeShips(main, players[0].gameBoard.ships[0]);
+
+  // main.innerHTML = "";
+  // main.append(showBoard(players[0].gameBoard), showBoard(players[1].gameBoard));
 
   // Render the board for each player, and allow them to place their ships
 

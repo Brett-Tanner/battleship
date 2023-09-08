@@ -14,6 +14,7 @@ interface gameBoard {
   receiveAttack(space): boolean;
   rows: row[];
   ships: ship[];
+  vacant(coordinates: coordinates): boolean;
 }
 
 interface lengthMapping {
@@ -26,6 +27,7 @@ interface player {
   human: boolean;
   gameBoard: gameBoard;
   attack(board, coordinates?): boolean;
+  placeShips(main): boolean;
 }
 
 interface playerData {
@@ -44,7 +46,7 @@ interface ship {
   length: number;
   type: shipType;
   hit(): number;
-  possibleEnds(currentCoords: coordinates): coordinates[];
+  possibleEnds(gameBoard: gameBoard, currentCoords: coordinates): coordinates[];
   sunk(): boolean;
 }
 
