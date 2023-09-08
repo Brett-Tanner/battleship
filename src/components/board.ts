@@ -43,6 +43,35 @@ function showBoard(board: gameBoard, message?: string, obscured?: boolean) {
   return domBoard;
 }
 
+function addAttackListeners(
+  main: HTMLElement,
+  board: HTMLTableElement,
+  activePlayer: player,
+  defender: player
+) {
+  board.querySelectorAll("td").forEach((cell) => {
+    cell.addEventListener("click", () => {
+      const ship = activePlayer.attack(
+        defender.gameBoard,
+        getCoordinates(cell)
+      );
+      ship ? cell.appendChild(hitMarker()) : cell.appendChild(missMarker());
+      main.removeChild(board);
+      if (ship) {
+        main.appendChild(
+          showBoard(
+            defender.gameBoard,
+            `You ${ship.sunk() ? "sunk" : "hit"} my ${ship.type}`,
+            true
+          )
+        );
+      } else {
+        main.appendChild(showBoard(defender.gameBoard, "You missed :p", true));
+      }
+    });
+  });
+}
+
 function getCoordinates(cell: HTMLTableCellElement) {
   const dataCoords = cell.dataset.coordinates?.split("_");
   if (
@@ -63,7 +92,7 @@ function hitMarker() {
   const container = document.createElement("div");
 
   const marker = document.createElement("div");
-  marker.classList.add("bg-red-600", "rounded-full", "h-5", "w-5");
+  marker.classList.add("bg-red-600", "rounded-full", "h-3", "w-3");
 
   container.appendChild(marker);
   container.classList.add("flex", "justify-center", "items-center");
@@ -85,7 +114,7 @@ function shipMarker(space: space) {
   const container = document.createElement("div");
 
   const marker = document.createElement("div");
-  marker.classList.add("bg-slate-400", "rounded-full", "h-3", "w-3");
+  marker.classList.add("bg-slate-400", "rounded-full", "h-5", "w-5");
 
   if (space.hit) marker.appendChild(hitMarker());
   if (space.missed) marker.appendChild(missMarker());
@@ -95,4 +124,4 @@ function shipMarker(space: space) {
   return container;
 }
 
-export { getCoordinates, showBoard };
+export { addAttackListeners, getCoordinates, showBoard };

@@ -11,7 +11,7 @@ interface game {
 interface gameBoard {
   allSunk(): boolean;
   placeShip(ship: ship, start: coordinates, end: coordinates): void;
-  receiveAttack(space): boolean;
+  receiveAttack(space): ship | null;
   rows: row[];
   ships: ship[];
   vacant(coordinates: coordinates): boolean;
@@ -26,8 +26,8 @@ interface player {
   name: string;
   human: boolean;
   gameBoard: gameBoard;
-  attack(board, coordinates?): boolean;
-  placeShips(main): boolean;
+  attack(board, coordinates?): ship | null;
+  placeShips(main, ship): Promise;
 }
 
 interface playerData {

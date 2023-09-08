@@ -1,4 +1,4 @@
-import { showBoard } from "../components/board";
+import { addAttackListeners, showBoard } from "../components/board";
 import { playerForm } from "../components/input";
 import { playerFactory } from "./player";
 
@@ -30,6 +30,7 @@ async function playGame(playerOne: playerData, playerTwo: playerData) {
       main.appendChild(showBoard(player.gameBoard, `${player.name}`));
     } else {
       const targetBoard = showBoard(player.gameBoard, `${player.name}`, true);
+      addAttackListeners(main, targetBoard, activePlayer, player);
       main.appendChild(targetBoard);
     }
   });

@@ -87,11 +87,10 @@ function gameBoardFactory(): gameBoard {
     if (space.ship) {
       space.ship.hit();
       space.hit = true;
-      return true;
     } else {
       space.missed = true;
-      return false;
     }
+    return space.ship;
   };
 
   const vacant = (coordinates: coordinates) => {

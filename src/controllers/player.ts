@@ -21,9 +21,8 @@ function playerFactory(name: string, human: boolean) {
       gameBoard,
       `${name}, place your ${ship.type}`
     );
-    const cells = placementBoard.querySelectorAll("td");
     return new Promise<HTMLTableCellElement>((resolve) => {
-      cells.forEach((cell) => {
+      placementBoard.querySelectorAll("td").forEach((cell) => {
         cell.addEventListener("click", () => {
           main.innerHTML = "";
           main.appendChild(
