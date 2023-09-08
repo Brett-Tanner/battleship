@@ -1,5 +1,30 @@
-function showBoard(board: gameBoard, message?: string) {
+function showBoard(board: gameBoard, message?: string, obscured?: boolean) {
   const domBoard = document.createElement("table");
+
+  function createRow(row: space[], rowIndex: number) {
+    const domRow = document.createElement("tr");
+
+    const domSpaces = row.map((space) => {
+      const spaceIndex = row.indexOf(space);
+      const domSpace = document.createElement("td");
+      domSpace.dataset.coordinates = `y${rowIndex}_x${spaceIndex}`;
+
+      if (space.ship && !obscured) domSpace.appendChild(shipMarker(space));
+      if (space.hit) domSpace.appendChild(hitMarker());
+      if (space.missed) domSpace.appendChild(missMarker());
+
+      domSpace.classList.add(
+        "border",
+        "border-neutral-200",
+        "w-[10%]",
+        "h-[10%]"
+      );
+      return domSpace;
+    });
+
+    domRow.append(...domSpaces);
+    return domRow;
+  }
 
   if (message) {
     const caption = document.createElement("caption");
@@ -16,31 +41,6 @@ function showBoard(board: gameBoard, message?: string) {
 
   domBoard.classList.add("table-fixed", "border-collapse", "basis-1/2");
   return domBoard;
-}
-
-function createRow(row: space[], rowIndex: number) {
-  const domRow = document.createElement("tr");
-
-  const domSpaces = row.map((space) => {
-    const spaceIndex = row.indexOf(space);
-    const domSpace = document.createElement("td");
-    domSpace.dataset.coordinates = `y${rowIndex}_x${spaceIndex}`;
-
-    if (space.ship) domSpace.appendChild(shipMarker(space));
-    if (space.hit) domSpace.appendChild(hitMarker());
-    if (space.missed) domSpace.appendChild(missMarker());
-
-    domSpace.classList.add(
-      "border",
-      "border-neutral-200",
-      "w-[10%]",
-      "h-[10%]"
-    );
-    return domSpace;
-  });
-
-  domRow.append(...domSpaces);
-  return domRow;
 }
 
 function getCoordinates(cell: HTMLTableCellElement) {

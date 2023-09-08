@@ -8,7 +8,7 @@ const main =
 
 // TODO: uncomment when done testing
 // Start by showing player details form
-main.appendChild(playerForm());
+// main.appendChild(playerForm());
 
 async function playGame(playerOne: playerData, playerTwo: playerData) {
   // Create the players when form is submitted
@@ -17,14 +17,21 @@ async function playGame(playerOne: playerData, playerTwo: playerData) {
     playerFactory(playerTwo.name, playerTwo.human),
   ];
 
+  let activePlayer = players[0];
+
   // Render the board for each player, and allow them to place their ships
   await players[0].placeShips(main, players[0].gameBoard.ships[0]);
   await players[1].placeShips(main, players[1].gameBoard.ships[0]);
 
-  // Render both boards, TODO: obscured for inactive player
+  // Render both boards, obscured for inactive player
   main.innerHTML = "";
   players.forEach((player) => {
-    main.appendChild(showBoard(player.gameBoard, `${player.name}`));
+    if (activePlayer === player) {
+      main.appendChild(showBoard(player.gameBoard, `${player.name}`));
+    } else {
+      const targetBoard = showBoard(player.gameBoard, `${player.name}`, true);
+      main.appendChild(targetBoard);
+    }
   });
 
   //  make moves
@@ -32,6 +39,6 @@ async function playGame(playerOne: playerData, playerTwo: playerData) {
 }
 
 // TODO: remove after testing
-// playGame({ name: "Vika", human: true }, { name: "Brett", human: false });
+playGame({ name: "Vika", human: true }, { name: "Brett", human: false });
 
 export { playGame };
