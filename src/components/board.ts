@@ -9,9 +9,12 @@ function showBoard(board: gameBoard, message?: string, obscured?: boolean) {
       const domSpace = document.createElement("td");
       domSpace.dataset.coordinates = `y${rowIndex}_x${spaceIndex}`;
 
-      if (space.ship && !obscured) domSpace.appendChild(shipMarker(space));
-      if (space.hit) domSpace.appendChild(hitMarker());
-      if (space.missed) domSpace.appendChild(missMarker());
+      if (space.ship && !obscured) {
+        domSpace.appendChild(shipMarker(space));
+      } else {
+        if (space.hit) domSpace.appendChild(hitMarker());
+        if (space.missed) domSpace.appendChild(missMarker());
+      }
 
       domSpace.classList.add(
         "border",
@@ -39,36 +42,39 @@ function showBoard(board: gameBoard, message?: string, obscured?: boolean) {
     domBoard.appendChild(createRow(row, rowIndex));
   });
 
-  domBoard.classList.add("table-fixed", "border-collapse", "basis-1/2");
+  domBoard.classList.add("table-fixed", "border-collapse", "basis-[40%]");
   return domBoard;
 }
 
 function addAttackListeners(
   main: HTMLElement,
   board: HTMLTableElement,
-  activePlayer: player,
+  player: player,
   defender: player
 ) {
-  board.querySelectorAll("td").forEach((cell) => {
-    cell.addEventListener("click", () => {
-      const ship = activePlayer.attack(
-        defender.gameBoard,
-        getCoordinates(cell)
-      );
-      ship ? cell.appendChild(hitMarker()) : cell.appendChild(missMarker());
-      main.removeChild(board);
-      if (ship) {
-        main.appendChild(
-          showBoard(
-            defender.gameBoard,
-            `You ${ship.sunk() ? "sunk" : "hit"} my ${ship.type}`,
-            true
-          )
-        );
-      } else {
-        main.appendChild(showBoard(defender.gameBoard, "You missed :p", true));
-      }
+  return new Promise<void>((resolve) => {
+    board.querySelectorAll("td").forEach((cell) => {
+      cell.addEventListener("click", () => {
+        const ship = player.attack(defender.gameBoard, getCoordinates(cell));
+        ship ? cell.appendChild(hitMarker()) : cell.appendChild(missMarker());
+        main.removeChild(board);
+        if (ship) {
+          main.appendChild(
+            showBoard(
+              defender.gameBoard,
+              `You ${ship.sunk() ? "sunk" : "hit"} my ${ship.type}`,
+              true
+            )
+          );
+        } else {
+          main.appendChild(
+            showBoard(defender.gameBoard, "You missed :p", true)
+          );
+        }
+        resolve();
+      });
     });
+    main.appendChild(board);
   });
 }
 
@@ -85,8 +91,6 @@ function getCoordinates(cell: HTMLTableCellElement) {
 
   return { y: y, x: x };
 }
-
-// TODO: lot of repeated code to DRY here
 
 function hitMarker() {
   const container = document.createElement("div");
@@ -119,6 +123,7 @@ function shipMarker(space: space) {
   if (space.hit) marker.appendChild(hitMarker());
   if (space.missed) marker.appendChild(missMarker());
 
+  marker.classList.add("flex", "justify-center", "items-center");
   container.appendChild(marker);
   container.classList.add("flex", "justify-center", "items-center");
   return container;

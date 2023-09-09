@@ -28,6 +28,7 @@ interface player {
   gameBoard: gameBoard;
   attack(board, coordinates?): ship | null;
   placeShips(main, ship): Promise;
+  takeTurn(main, defender): void;
 }
 
 interface playerData {
