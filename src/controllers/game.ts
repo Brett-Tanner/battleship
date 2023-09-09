@@ -23,7 +23,4 @@ async function playGame(playerOne: playerData, playerTwo: playerData) {
   players[0].takeTurn(main, players[1]);
 }
 
-// TODO: remove after testing
-// playGame({ name: "Vika", human: true }, { name: "Brett", human: false });
-
 export { playGame };

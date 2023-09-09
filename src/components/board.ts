@@ -54,25 +54,31 @@ function addAttackListeners(
 ) {
   return new Promise<void>((resolve) => {
     board.querySelectorAll("td").forEach((cell) => {
-      cell.addEventListener("click", () => {
-        const ship = player.attack(defender.gameBoard, getCoordinates(cell));
-        ship ? cell.appendChild(hitMarker()) : cell.appendChild(missMarker());
-        main.removeChild(board);
-        if (ship) {
-          main.appendChild(
-            showBoard(
-              defender.gameBoard,
-              `You ${ship.sunk() ? "sunk" : "hit"} my ${ship.type}`,
-              true
-            )
-          );
-        } else {
-          main.appendChild(
-            showBoard(defender.gameBoard, "You missed :p", true)
-          );
-        }
-        resolve();
-      });
+      const coordinates = getCoordinates(cell);
+      const cellData = defender.gameBoard.rows[coordinates.y][coordinates.x];
+      if (cellData.hit || cellData.missed) {
+        return;
+      } else {
+        cell.addEventListener("click", () => {
+          const ship = player.attack(defender.gameBoard, getCoordinates(cell));
+          ship ? cell.appendChild(hitMarker()) : cell.appendChild(missMarker());
+          main.removeChild(board);
+          if (ship) {
+            main.appendChild(
+              showBoard(
+                defender.gameBoard,
+                `You ${ship.sunk() ? "sunk" : "hit"} my ${ship.type}`,
+                true
+              )
+            );
+          } else {
+            main.appendChild(
+              showBoard(defender.gameBoard, "You missed :p", true)
+            );
+          }
+          resolve();
+        });
+      }
     });
     main.appendChild(board);
   });
